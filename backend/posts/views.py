@@ -1,3 +1,67 @@
-from django.shortcuts import render
+from rest_framework import viewsets, permissions, status, generics
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.response import Response
+from .models import Post, Like, Comment
+from .serializers import PostSerializer, CommentSerializer
+from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
+from accounts.models import Follow
+from django.contrib.auth.models import User
 
-# Create your views here.
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Post.objects.select_related("author")
+        .prefetch_related("likes", "comments")
+        .all()
+        .order_by("-created_at")
+    )
+    serializer_class = PostSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    @action(
+        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
+    )
+    def like(self, request, pk=None):
+        post = self.get_object()
+        obj, created = Like.objects.get_or_create(user=request.user, post=post)
+        if created:
+            return Response({"detail": "Liked"}, status=status.HTTP_201_CREATED)
+        else:
+            obj.delete()
+            return Response({"detail": "Unliked"}, status=status.HTTP_200_OK)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        post_pk = self.kwargs.get("post_pk")
+        return (
+            Comment.objects.filter(post_id=post_pk)
+            .select_related("user")
+            .order_by("-created_at")
+        )
+
+    def perform_create(self, serializer):
+        post_pk = self.kwargs.get("post_pk")
+        post = get_object_or_404(Post, pk=post_pk)
+        serializer.save(user=self.request.user, post=post)
+
+
+class FeedView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        following_pks = Follow.objects.filter(follower=user).values_list(
+            "following_id", flat=True
+        )
+        return Post.objects.filter(author__in=list(following_pks) + [user.pk]).order_by(
+            "-created_at"
+        )
