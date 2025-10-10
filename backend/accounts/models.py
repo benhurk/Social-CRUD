@@ -3,6 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+def user_directory_path(instance, filename):
+    return f"profile_pics/user_{instance.user.id}/{filename}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
