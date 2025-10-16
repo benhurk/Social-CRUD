@@ -1,5 +1,100 @@
-node_modules/
-venv/
+# Python cache / bytecode
 __pycache__/
-.env
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+env/
+.venv/
+
+# Local database
 db.sqlite3
+
+# Django media & static files
+media/
+staticfiles/
+backend/media/
+backend/staticfiles/
+
+# Logs & debug
+*.log
+*.pot
+*.mo
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.swp
+*.swo
+*.bak
+
+# IDE-specific
+.vscode/
+.idea/
+*.code-workspace
+
+# Coverage & testing
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+*,cover
+.pytest_cache/
+nosetests.xml
+junit.xml
+.DS_Store
+
+# Dependencies
+node_modules/
+
+# Production build
+build/
+dist/
+
+# Local environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor/OS files
+.DS_Store
+Thumbs.db
+
+# IDE cache
+.vscode/
+.idea/
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Python packaging
+*.egg-info/
+.eggs/
+MANIFEST
+build/
+dist/
+pip-wheel-metadata/
+
+# JetBrains, VSCode, etc.
+.vscode/
+.idea/
+*.iml
+
+# System files
+.DS_Store
+Thumbs.db
