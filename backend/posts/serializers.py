@@ -16,7 +16,8 @@ class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     likes_count = serializers.IntegerField(source="likes.count", read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
+    # removed inline `comments` list to improve scalability
+    # comments will be fetched through /posts/<id>/comments/
 
     class Meta:
         model = Post
@@ -28,5 +29,4 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
             "likes_count",
             "comments_count",
-            "comments",
         )
