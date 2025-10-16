@@ -1,19 +1,20 @@
 from rest_framework import viewsets, permissions, status, generics
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from accounts.models import Follow
 from .models import Post, Like, Comment
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
-from django.shortcuts import get_object_or_404
-from accounts.models import Follow
-from django.contrib.auth.models import User
 
 
 class PostViewSet(viewsets.ModelViewSet):
+    """CRUD for posts + like/unlike toggle."""
+
     queryset = (
         Post.objects.select_related("author")
         .prefetch_related("likes", "comments")
-        .all()
         .order_by("-created_at")
     )
     serializer_class = PostSerializer
@@ -26,16 +27,18 @@ class PostViewSet(viewsets.ModelViewSet):
         detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
     )
     def like(self, request, pk=None):
+        """Toggle like/unlike on a post."""
         post = self.get_object()
         obj, created = Like.objects.get_or_create(user=request.user, post=post)
         if created:
             return Response({"detail": "Liked"}, status=status.HTTP_201_CREATED)
-        else:
-            obj.delete()
-            return Response({"detail": "Unliked"}, status=status.HTTP_200_OK)
+        obj.delete()
+        return Response({"detail": "Unliked"}, status=status.HTTP_200_OK)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
+    """CRUD for comments under a post."""
+
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -43,7 +46,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         post_pk = self.kwargs.get("post_pk")
         return (
             Comment.objects.filter(post_id=post_pk)
-            .select_related("user")
+            .select_related("user", "post")
             .order_by("-created_at")
         )
 
@@ -54,6 +57,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class FeedView(generics.ListAPIView):
+    """List posts by followed users + own posts."""
+
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -62,6 +67,9 @@ class FeedView(generics.ListAPIView):
         following_pks = Follow.objects.filter(follower=user).values_list(
             "following_id", flat=True
         )
-        return Post.objects.filter(author__in=list(following_pks) + [user.pk]).order_by(
-            "-created_at"
+        return (
+            Post.objects.filter(author__in=list(following_pks) + [user.pk])
+            .select_related("author")
+            .prefetch_related("likes", "comments")
+            .order_by("-created_at")
         )

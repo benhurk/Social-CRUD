@@ -54,7 +54,7 @@ class FollowToggleView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, username):
-        to_user = get_object_or_404(User, username=username)
+        to_user = get_object_or_404(User, username=username.lower())
         if to_user == request.user:
             return Response(
                 {"detail": "Cannot follow yourself."},
