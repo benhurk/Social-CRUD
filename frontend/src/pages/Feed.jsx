@@ -13,7 +13,7 @@ function Feed() {
     try {
       setLoading(true);
       const res = await axios.get("/posts/");
-      setPosts(res.data);
+      setPosts(res.data.results);
     } catch (err) {
       console.error(err);
       setError("Erro ao carregar posts.");
@@ -33,7 +33,7 @@ function Feed() {
       setNewPost("");
     } catch (err) {
       console.error(err);
-      setError("Failed to create post.");
+      setError("Erro ao criar post.");
     } finally {
       setPosting(false);
     }
@@ -80,7 +80,11 @@ function Feed() {
         ) : posts.length > 0 ? (
           <div className="space-y-4">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard
+                key={post.id}
+                post={post}
+                onDelete={(id) => setPosts(posts.filter((p) => p.id !== id))}
+              />
             ))}
           </div>
         ) : (

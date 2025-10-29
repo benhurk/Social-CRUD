@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import { TiSocialTwitter } from "react-icons/ti";
 
 function Navbar() {
   const { isAuthenticated, logout } = useAuthStore();
 
   return (
-    <nav className="bg-white border-b shadow-sm sticky top-0">
+    <nav className="border-b backdrop-blur-sm bg-[rgba(255, 255, 255, 0.3)] shadow-sm sticky top-0">
       <div className="max-w-3xl mx-auto flex justify-between items-center p-4">
         <Link to="/" className="text-xl font-bold text-blue-600">
-          Social CRUD
+          <TiSocialTwitter className="text-5xl rotate-180" />
         </Link>
         <div className="flex items-center gap-8">
           {isAuthenticated ? (
