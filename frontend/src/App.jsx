@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import useAuthStore from "./store/authStore";
 import Navbar from "./components/NavBar";
 
@@ -9,7 +10,13 @@ import Feed from "./pages/Feed";
 // import NotFound from "./pages/NotFound";
 
 function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user, fetchUser } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      fetchUser();
+    }
+  }, [isAuthenticated, user, fetchUser]);
 
   return (
     <BrowserRouter>
