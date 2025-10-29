@@ -24,16 +24,29 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(
-        detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
+        detail=True,
+        methods=["post", "get"],
+        permission_classes=[permissions.IsAuthenticated],
     )
     def like(self, request, pk=None):
-        """Toggle like/unlike on a post."""
         post = self.get_object()
+
+        if request.method == "GET":
+            is_liked = Like.objects.filter(user=request.user, post=post).exists()
+            return Response({"is_liked": is_liked, "likes_count": post.likes.count()})
+
+        """Toggle like/unlike on a post."""
         obj, created = Like.objects.get_or_create(user=request.user, post=post)
         if created:
-            return Response({"detail": "Liked"}, status=status.HTTP_201_CREATED)
+            return Response(
+                {"detail": "Liked", "likes_count": post.likes.count() + 1},
+                status=status.HTTP_201_CREATED,
+            )
         obj.delete()
-        return Response({"detail": "Unliked"}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Unliked", "likes_count": post.likes.count() - 1},
+            status=status.HTTP_200_OK,
+        )
 
 
 class CommentViewSet(viewsets.ModelViewSet):
