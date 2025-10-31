@@ -10,6 +10,8 @@ from .serializers import (
 from .models import Profile, Follow
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from posts.models import Post
+from posts.serializers import PostSerializer
 
 
 class RegisterView(generics.CreateAPIView):
@@ -69,3 +71,41 @@ class FollowToggleView(views.APIView):
         else:
             obj.delete()
             return Response({"detail": f"Unfollowed {username}."})
+
+
+class UserProfileView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username__iexact=username)
+        profile = user.profile
+
+        followers_count = Follow.objects.filter(following=user).count()
+        following_count = Follow.objects.filter(follower=user).count()
+        is_following = False
+
+        if request.user.is_authenticated:
+            is_following = Follow.objects.filter(
+                follower=request.user, following=user
+            ).exists()
+
+        posts = Post.objects.filter(author=user).order_by("-created_at")
+        post_data = PostSerializer(posts, many=True, context={"request": request}).data
+
+        return Response(
+            {
+                "id": user.id,
+                "username": user.username,
+                "display_name": profile.display_name,
+                "bio": profile.bio,
+                "avatar": (
+                    request.build_absolute_uri(profile.avatar.url)
+                    if profile.avatar
+                    else None
+                ),
+                "followers_count": followers_count,
+                "following_count": following_count,
+                "is_following": is_following,
+                "posts": post_data,
+            }
+        )
