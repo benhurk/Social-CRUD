@@ -4,6 +4,7 @@ import useAuthStore from "../store/authStore";
 import { FcLike } from "react-icons/fc";
 import { FaCommentAlt } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
+import Comments from "./Comments";
 
 function PostCard({ post, onDelete }) {
   const { user } = useAuthStore();
@@ -11,6 +12,7 @@ function PostCard({ post, onDelete }) {
   const [liked, setLiked] = useState(false);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     const fetchLike = async () => {
@@ -28,7 +30,6 @@ function PostCard({ post, onDelete }) {
       const res = await axios.post(`/posts/${post.id}/like/`);
       setLiked(!liked);
       setLikes(res.data.likes_count);
-      console.log(res);
     } catch (err) {
       console.error(err);
       setError("Erro ao curtir post.");
@@ -80,19 +81,23 @@ function PostCard({ post, onDelete }) {
 
       <p className="text-gray-800 mb-4">{post.content}</p>
 
-      <div className="flex items-center gap-8 text-sm">
+      <div className="flex items-center gap-8">
         <button
           onClick={toggleLike}
-          className={`flex items-end gap-1 hover:cursor-pointer ${!liked && "opacity-50"}  hover:opacity-100 transition-opacity duration-200`}
+          className={`flex gap-1 text-gray-800 hover:cursor-pointer ${!liked && "opacity-60"}  hover:opacity-100 transition-opacity duration-200`}
         >
-          <FcLike className="text-2xl" /> {likes}
+          <FcLike className="text-xl" /> {likes}
         </button>
-        <button className="flex items-end gap-1 text-gray-500 hover:text-gray-700 hover:cursor-pointer transition-colors duration-200">
-          <FaCommentAlt className="text-xl" /> Comentar
+        <button
+          className="flex items-center gap-1 text-gray-800 opacity-60 hover:opacity-100 hover:cursor-pointer transition-opacity duration-200"
+          onClick={() => setShowComments(!showComments)}
+        >
+          <FaCommentAlt className="text-lg" /> Comentários
         </button>
       </div>
 
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      <Comments postId={post.id} show={showComments} />
     </div>
   );
 }
