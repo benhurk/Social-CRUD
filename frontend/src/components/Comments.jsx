@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "../api/axios";
 import useAuthStore from "../store/authStore";
 import { TiDelete } from "react-icons/ti";
+import { Link } from "react-router-dom";
 
 function Comments({ postId, show }) {
   const { user, isAuthenticated } = useAuthStore();
@@ -77,9 +78,12 @@ function Comments({ postId, show }) {
                     className="w-10 h-10 rounded-full object-cover mr-3"
                   />
                   <div>
-                    <p className="font-semibold text-gray-800">
+                    <Link
+                      to={`/profile/${comment.user?.username}`}
+                      className="font-semibold text-gray-800 hover:text-blue-600"
+                    >
                       {comment.user?.username}
-                    </p>
+                    </Link>
                     <p className="text-sm text-gray-500">
                       {new Date(comment.created_at).toLocaleString()}
                     </p>

@@ -12,7 +12,7 @@ function Feed() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/posts/");
+      const res = await axios.get("/feed/");
       setPosts(res.data.results);
     } catch (err) {
       console.error(err);

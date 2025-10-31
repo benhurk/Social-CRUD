@@ -6,7 +6,7 @@ import Navbar from "./components/NavBar";
 import Login from "./pages/LoginPage";
 import Register from "./pages/RegisterPage";
 import Feed from "./pages/Feed";
-// import Profile from "./pages/Profile";
+import Profile from "./pages/Profile";
 // import NotFound from "./pages/NotFound";
 
 function App() {
@@ -27,12 +27,10 @@ function App() {
             path="/"
             element={isAuthenticated ? <Feed /> : <Navigate to="/login" />}
           />
-          {/*
           <Route
-            path="/profile"
+            path="/profile/:username"
             element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
           />
-          */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

@@ -5,6 +5,7 @@ import { FcLike } from "react-icons/fc";
 import { FaCommentAlt } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import Comments from "./Comments";
+import { Link } from "react-router-dom";
 
 function PostCard({ post, onDelete }) {
   const { user } = useAuthStore();
@@ -60,9 +61,12 @@ function PostCard({ post, onDelete }) {
             className="w-10 h-10 rounded-full object-cover mr-3"
           />
           <div>
-            <p className="font-semibold text-gray-800">
+            <Link
+              to={`/profile/${post.author?.username}`}
+              className="font-semibold text-gray-800 hover:text-blue-600"
+            >
               {post.author?.username}
-            </p>
+            </Link>
             <p className="text-sm text-gray-500">
               {new Date(post.created_at).toLocaleString()}
             </p>
