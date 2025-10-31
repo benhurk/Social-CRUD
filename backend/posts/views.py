@@ -53,7 +53,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     """CRUD for comments under a post."""
 
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+    ]
 
     def get_queryset(self):
         post_pk = self.kwargs.get("post_pk")
