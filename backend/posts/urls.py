@@ -12,5 +12,10 @@ urlpatterns = [
         CommentViewSet.as_view({"get": "list", "post": "create"}),
         name="post-comments",
     ),
+    path(
+        "posts/<int:post_pk>/comments/<int:pk>/",
+        CommentViewSet.as_view({"get": "retrieve", "delete": "destroy"}),
+        name="comment-detail",
+    ),
     path("feed/", FeedView.as_view(), name="feed"),
 ]
