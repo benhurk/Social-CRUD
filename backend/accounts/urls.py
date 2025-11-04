@@ -5,6 +5,8 @@ from .views import (
     ChangePasswordView,
     FollowToggleView,
     UserProfileView,
+    FollowersListView,
+    FollowingListView,
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -22,4 +24,14 @@ urlpatterns = [
         name="follow-toggle",
     ),
     path("users/<str:username>/", UserProfileView.as_view(), name="user-profile"),
+    path(
+        "users/<str:username>/followers/",
+        FollowersListView.as_view(),
+        name="followers-list",
+    ),
+    path(
+        "users/<str:username>/following/",
+        FollowingListView.as_view(),
+        name="following-list",
+    ),
 ]

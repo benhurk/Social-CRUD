@@ -109,3 +109,61 @@ class UserProfileView(views.APIView):
                 "posts": post_data,
             }
         )
+
+
+class FollowersListView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username__iexact=username)
+        followers = Follow.objects.filter(following=user).select_related("follower")
+
+        data = []
+        for f in followers:
+            follower = f.follower
+            data.append(
+                {
+                    "id": follower.id,
+                    "username": follower.username,
+                    "display_name": follower.profile.display_name,
+                    "avatar": (
+                        request.build_absolute_uri(follower.profile.avatar.url)
+                        if follower.profile.avatar
+                        else None
+                    ),
+                    "is_following": request.user.is_authenticated
+                    and Follow.objects.filter(
+                        follower=request.user, following=follower
+                    ).exists(),
+                }
+            )
+        return Response(data)
+
+
+class FollowingListView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username__iexact=username)
+        following = Follow.objects.filter(follower=user).select_related("following")
+
+        data = []
+        for f in following:
+            followed_user = f.following
+            data.append(
+                {
+                    "id": followed_user.id,
+                    "username": followed_user.username,
+                    "display_name": followed_user.profile.display_name,
+                    "avatar": (
+                        request.build_absolute_uri(followed_user.profile.avatar.url)
+                        if followed_user.profile.avatar
+                        else None
+                    ),
+                    "is_following": request.user.is_authenticated
+                    and Follow.objects.filter(
+                        follower=request.user, following=followed_user
+                    ).exists(),
+                }
+            )
+        return Response(data)
