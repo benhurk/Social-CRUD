@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import useAuthStore from "../store/authStore";
 import PostCard from "../components/PostCard";
@@ -11,13 +11,15 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
 
+  const navigate = useNavigate();
+
   const fetchProfile = useCallback(async () => {
     try {
       const res = await axios.get(`/auth/users/${username}/`);
       setProfile(res.data);
       setFollowing(res.data.is_following);
     } catch (err) {
-      console.error("Failed to load profile:", err);
+      console.error("Erro ao carregar perfil:", err);
     } finally {
       setLoading(false);
     }
@@ -29,7 +31,7 @@ function Profile() {
       setFollowing(!following);
       fetchProfile();
     } catch (err) {
-      console.error("Follow toggle failed:", err);
+      console.error("Erro ao alterar follow:", err);
     }
   };
 
@@ -50,25 +52,39 @@ function Profile() {
         <img
           src={profile.avatar || "/default-avatar.png"}
           alt={profile.username}
-          className="w-20 h-20 rounded-full object-cover"
+          className="w-25 h-25 rounded-full object-cover"
         />
-        <div>
-          <h1 className="text-xl font-semibold">
-            {profile.display_name || profile.username}
-          </h1>
-          <p className="text-gray-600">@{profile.username}</p>
-          <div className="flex gap-4 mt-1 text-sm text-gray-600">
-            <span>{profile.followers_count} Seguidores</span>
-            <span>{profile.following_count} Seguindo</span>
+        <div className="flex justify-between w-full">
+          <div>
+            <h1 className="text-xl font-semibold">
+              {profile.display_name || profile.username}
+            </h1>
+            <p className="text-gray-600">@{profile.username}</p>
+            <p className="text-sm text-gray-700 mt-2 mb-2">{profile.bio}</p>
+            <div className="flex gap-4 text-sm text-gray-600">
+              <span>{profile.followers_count} Seguidores</span>
+              <span>{profile.following_count} Seguindo</span>
+            </div>
           </div>
           {!isOwnProfile && (
             <button
               onClick={handleFollowToggle}
-              className={`mt-2 px-4 py-1 rounded text-white text-sm hover:cursor-pointer ${
-                following ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+              className={`h-fit self-end mt-2 px-4 py-1 rounded text-white text-sm hover:cursor-pointer ${
+                following
+                  ? "bg-gray-400 hover:bg-gray-500"
+                  : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
               {following ? "Seguindo" : "Seguir"}
+            </button>
+          )}
+
+          {isOwnProfile && (
+            <button
+              onClick={() => navigate("/edit-profile")}
+              className="h-fit self-end mt-2 px-4 py-1 rounded text-white text-sm bg-gray-700 hover:cursor-pointer hover:bg-gray-800"
+            >
+              Editar perfil
             </button>
           )}
         </div>

@@ -56,9 +56,9 @@ function PostCard({ post, onDelete }) {
       <div className="flex justify-between items-start">
         <div className="flex items-center mb-4">
           <img
-            src={post.author?.profile_picture || "/default-avatar.png"}
+            src={post.author?.avatar || "/default-avatar.png"}
             alt={post.author?.username}
-            className="w-10 h-10 rounded-full object-cover mr-3"
+            className="w-15 h-15 rounded-full object-cover mr-3"
           />
           <div>
             <Link

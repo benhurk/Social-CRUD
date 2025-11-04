@@ -7,6 +7,7 @@ import Login from "./pages/LoginPage";
 import Register from "./pages/RegisterPage";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 // import NotFound from "./pages/NotFound";
 
 function App() {
@@ -30,6 +31,12 @@ function App() {
           <Route
             path="/profile/:username"
             element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/edit-profile"
+            element={
+              isAuthenticated ? <EditProfile /> : <Navigate to="/login" />
+            }
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
