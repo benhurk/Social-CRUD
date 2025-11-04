@@ -8,7 +8,8 @@ import Register from "./pages/RegisterPage";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
-// import NotFound from "./pages/NotFound";
+import FollowList from "./pages/FollowList";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const { isAuthenticated, user, fetchUser } = useAuthStore();
@@ -40,10 +41,19 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/*
-                     <Route path="*" element={<NotFound />} />
-            */}
+          <Route
+            path="/profile/:username/followers"
+            element={
+              isAuthenticated ? <FollowList /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/profile/:username/following"
+            element={
+              isAuthenticated ? <FollowList /> : <Navigate to="/login" />
+            }
+          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </BrowserRouter>

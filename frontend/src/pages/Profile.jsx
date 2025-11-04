@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
 import useAuthStore from "../store/authStore";
@@ -48,7 +49,7 @@ function Profile() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-10">
         <img
           src={profile.avatar || "/default-avatar.png"}
           alt={profile.username}
@@ -62,8 +63,18 @@ function Profile() {
             <p className="text-gray-600">@{profile.username}</p>
             <p className="text-sm text-gray-700 mt-2 mb-2">{profile.bio}</p>
             <div className="flex gap-4 text-sm text-gray-600">
-              <span>{profile.followers_count} Seguidores</span>
-              <span>{profile.following_count} Seguindo</span>
+              <Link
+                to={`/profile/${profile.username}/followers`}
+                className="hover:text-gray-800"
+              >
+                {profile.followers_count} Seguidores
+              </Link>
+              <Link
+                to={`/profile/${profile.username}/following`}
+                className="hover:text-gray-800"
+              >
+                {profile.following_count} Seguindo
+              </Link>
             </div>
           </div>
           {!isOwnProfile && (
@@ -90,15 +101,14 @@ function Profile() {
         </div>
       </div>
 
-      <h2 className="text-lg font-semibold mb-3">Posts</h2>
       {profile.posts.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-4 border-t border-gray-200 pt-10">
           {profile.posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">Nada postado ainda.</p>
+        <p className="text-gray-500 text-center">Nada postado ainda.</p>
       )}
     </div>
   );
