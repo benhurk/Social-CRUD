@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
         const refreshToken = localStorage.getItem("refresh");
         const res = await axios.post(
           (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/") +
-            "auth/token/refresh/",
+            "/auth/token/refresh/",
           { refresh: refreshToken },
         );
 
