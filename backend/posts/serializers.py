@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Like, Comment
-from django.contrib.auth.models import User
+from .models import Post, Comment
 from accounts.serializers import UserSerializer
 
 
@@ -16,8 +15,6 @@ class PostSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     likes_count = serializers.IntegerField(source="likes.count", read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
-    # removed inline `comments` list to improve scalability
-    # comments will be fetched through /posts/<id>/comments/
 
     class Meta:
         model = Post

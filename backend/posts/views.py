@@ -2,7 +2,6 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from accounts.models import Follow
 from .models import Post, Like, Comment
 from .serializers import PostSerializer, CommentSerializer
@@ -10,8 +9,6 @@ from .permissions import IsOwnerOrReadOnly
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    """CRUD for posts + like/unlike toggle."""
-
     queryset = (
         Post.objects.select_related("author")
         .prefetch_related("likes", "comments")
@@ -35,7 +32,6 @@ class PostViewSet(viewsets.ModelViewSet):
             is_liked = Like.objects.filter(user=request.user, post=post).exists()
             return Response({"is_liked": is_liked, "likes_count": post.likes.count()})
 
-        """Toggle like/unlike on a post."""
         obj, created = Like.objects.get_or_create(user=request.user, post=post)
         if created:
             return Response(
@@ -50,8 +46,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    """CRUD for comments under a post."""
-
     serializer_class = CommentSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -73,8 +67,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class FeedView(generics.ListAPIView):
-    """List posts by followed users + own posts."""
-
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 

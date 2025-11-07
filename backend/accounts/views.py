@@ -4,11 +4,8 @@ from django.contrib.auth.models import User
 from .serializers import (
     RegisterSerializer,
     ProfileSerializer,
-    UserSerializer,
-    FollowSerializer,
 )
 from .models import Profile, Follow
-from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from posts.models import Post
 from posts.serializers import PostSerializer
