@@ -60,10 +60,9 @@ function Register() {
       console.error(err);
       if (err.response?.data) {
         const data = err.response.data;
-        const firstError =
-          Object.values(data)
-            .flat()
-            .find((msg) => typeof msg === "string") || "Registration failed.";
+        const firstError = Object.values(data)
+          .flat()
+          .find((msg) => typeof msg === "string");
         setError(firstError);
       } else {
         setError("Não foi possível criar a conta. Tente novamente depois.");
