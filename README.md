@@ -15,12 +15,12 @@ App de rede social estilo Twitter completo com criação e interações em posts
 - SimpleJWT
 - SQLite
 
-### Requisitos
+## Requisitos
 
 - Python 12+
 - Node.js v24+
 
-### Como rodar localmente
+## Como rodar localmente
 
 ```bash
 git clone https://github.com/benhurk/Social-CRUD.git
@@ -39,22 +39,28 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-##### Variáveis de ambiente
+### Variáveis de ambiente
 
 - **frontend/.env:**
+
+```.env
   VITE_API_BASE_URL=<http://127.0.0.1:8000/api>
+```
 
 - **backend/.env:**
+
+  ```env
   DJANGO_SECRET_KEY=your-secret-key
   DEBUG=True
   ALLOWED_HOSTS=127.0.0.1,localhost
+  ```
 
-##### URLs
+#### URLs
 
 - Frontend: <http://localhost:5173/>
 - Backend: <http://127.0.0.1:8000/>
 
-### Rotas da API
+## Rotas da API
 
 **Usuários**
 
@@ -85,7 +91,7 @@ python manage.py runserver
 | `POST`   | `/posts/<id>/comments/`             | Criar novo comentário em um post           |
 | `DELETE` | `/posts/<id>/comments/<comment_id>` | Apagar comentário                          |
 
-### Links
+## Links
 
 - Frontend: <https://social-crud.vercel.app>
 - API: <https://benhurk.pythonanywhere.com>
